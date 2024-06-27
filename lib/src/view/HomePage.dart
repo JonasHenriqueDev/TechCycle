@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'MyApp.dart';
 import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
+import 'AdvertsPage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -74,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.card_giftcard),
               title: Text('Meus anúncios e vendas'),
               onTap: () {
-                _onItemTapped(2);
                 Navigator.pop(context);
+                _navigateToPage(AdvertsPage());
               },
             ),
             ListTile(
