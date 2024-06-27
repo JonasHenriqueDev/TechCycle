@@ -3,6 +3,7 @@ import 'MyApp.dart';
 import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
 import 'AdvertsPage.dart';
+import 'NotificationsPage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -83,8 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.notification_add),
               title: Text('Notificações'),
               onTap: () {
-                _onItemTapped(2);
                 Navigator.pop(context);
+                _navigateToPage(NotificationsPage());
               },
             ),
             ListTile(
