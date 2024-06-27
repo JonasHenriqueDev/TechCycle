@@ -4,6 +4,7 @@ import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
 import 'AdvertsPage.dart';
 import 'NotificationsPage.dart';
+import 'SettingsPage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -92,8 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.settings),
               title: Text('Configurações'),
               onTap: () {
-                _onItemTapped(2);
                 Navigator.pop(context);
+                _navigateToPage(SettingsPage());
               },
             ),
             ListTile(
