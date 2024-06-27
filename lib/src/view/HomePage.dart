@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'MyApp.dart';
+import 'ProfilePage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,12 +16,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _navigateToProfilePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TechCycle'),
+        title: Text(
+          'TechCycle',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: Text('Você selecionou a aba: $_selectedIndex'),
@@ -45,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.person),
               title: Text('Minha conta'),
               onTap: () {
-                _onItemTapped(0);
                 Navigator.pop(context);
+                _navigateToProfilePage();
               },
             ),
             ListTile(
