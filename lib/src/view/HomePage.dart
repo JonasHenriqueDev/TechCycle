@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'MyApp.dart';
 import 'ProfilePage.dart';
+import 'DiscardsPage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,10 +17,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _navigateToProfilePage() {
+  void _navigateToPage(page) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProfilePage()),
+      MaterialPageRoute(builder: (context) => page),
     );
   }
 
@@ -58,15 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Minha conta'),
               onTap: () {
                 Navigator.pop(context);
-                _navigateToProfilePage();
+                _navigateToPage(ProfilePage());
               },
             ),
             ListTile(
               leading: Icon(Icons.lock_clock),
               title: Text('Histórico de descartes'),
               onTap: () {
-                _onItemTapped(1);
                 Navigator.pop(context);
+                _navigateToPage(DiscardsPage());
               },
             ),
             ListTile(
