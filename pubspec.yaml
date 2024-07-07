@@ -14,6 +14,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_search_bar: ^3.0.0
+  http: ^1.2.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +33,15 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/tvplaceholder.png
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
+        - asset: fonts/Roboto-Italic.ttf
+          style: italic
+        - asset: fonts/Roboto-BoldItalic.ttf
+          weight: 700
+          style: italic
