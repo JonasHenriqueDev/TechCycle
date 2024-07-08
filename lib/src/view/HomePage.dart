@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
 import 'package:techcycle/src/provider/recompensa_provider.dart';
@@ -43,12 +46,20 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController = PageController(initialPage: 1);
   TextEditingController _searchController = TextEditingController();
 
+  late GoogleMapController mapController;
+
+  static const CameraPosition _initialPosition = CameraPosition(
+      target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 18.0);
+
+  final Completer<GoogleMapController> _controller = Completer();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AnuncioProvider>(context, listen: false).fetchAnuncios();
-      Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
+      Provider.of<RecompensaProvider>(context, listen: false)
+          .fetchRecompensas();
     });
   }
 
@@ -75,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refreshRecompensas() async {
-    await Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
+    await Provider.of<RecompensaProvider>(context, listen: false)
+        .fetchRecompensas();
   }
 
   @override
@@ -168,7 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final anuncio = anuncioProvider.anuncios[index];
                           return Card(
-                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
@@ -190,7 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           anuncio.titulo,
@@ -225,8 +239,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Center(
-            child: Text('Mapa de pontos de coleta'),
+          SafeArea(
+            child: GoogleMap(
+              initialCameraPosition: _initialPosition,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+            ),
           ),
           Column(
             children: [
@@ -287,15 +306,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       if (recompensaProvider.recompensa.isEmpty) {
-                        return Center(child: Text('Nenhuma recompensa encontrada'));
+                        return Center(
+                            child: Text('Nenhuma recompensa encontrada'));
                       }
 
                       return ListView.builder(
                         itemCount: recompensaProvider.recompensa.length,
                         itemBuilder: (context, index) {
-                          final recompensa = recompensaProvider.recompensa[index];
+                          final recompensa =
+                              recompensaProvider.recompensa[index];
                           return Card(
-                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
@@ -317,7 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           recompensa.titulo,
@@ -329,7 +352,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(height: 8),
                                         Text(recompensa.descricao),
                                         SizedBox(height: 8),
-
                                       ],
                                     ),
                                   ),
