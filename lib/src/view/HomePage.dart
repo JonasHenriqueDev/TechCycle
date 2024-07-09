@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
@@ -51,6 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
   static const CameraPosition _initialPosition = CameraPosition(
       target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 18.0);
 
+  final List<Marker> myMarker = [];
+  final List<Marker> markerList = [];
+
   final Completer<GoogleMapController> _controller = Completer();
 
   @override
@@ -60,6 +64,39 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<AnuncioProvider>(context, listen: false).fetchAnuncios();
       Provider.of<RecompensaProvider>(context, listen: false)
           .fetchRecompensas();
+    });
+    myMarker.addAll(markerList);
+    packData();
+  }
+
+  Future<Position> getUserLocation() async {
+    await Geolocator.requestPermission()
+        .then((value) {})
+        .onError((error, stackTrace) {
+      print('Error $error');
+    });
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  packData() {
+    getUserLocation().then((value) async {
+      print('Minha Localização');
+      print('${value.latitude} ${value.longitude}');
+
+      myMarker.add(Marker(
+          markerId: const MarkerId('UserLocation'),
+          position: LatLng(value.latitude, value.longitude),
+          infoWindow: const InfoWindow(
+            title: 'Minha Localização',
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueAzure)));
+      CameraPosition cameraPosition = CameraPosition(
+          target: LatLng(value.latitude, value.longitude), zoom: 18.0);
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      setState(() {});
     });
   }
 
@@ -239,13 +276,25 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          SafeArea(
-            child: GoogleMap(
-              initialCameraPosition: _initialPosition,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-            ),
+          Stack(
+            children: <Widget>[
+              Container(
+                child: SafeArea(
+                  child: GoogleMap(
+                    initialCameraPosition: _initialPosition,
+                    mapType: MapType.normal,
+                    markers: Set<Marker>.of(myMarker),
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                  ),
+                ),
+              ),
+              FloatingActionButton(
+                onPressed: () {},
+                child: Icon(Icons.adjust),
+              )
+            ],
           ),
           Column(
             children: [
