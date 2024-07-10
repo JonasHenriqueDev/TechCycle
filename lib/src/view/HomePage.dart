@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late GoogleMapController mapController;
 
   static const CameraPosition _initialPosition = CameraPosition(
-      target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 18.0);
+      target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 20.0);
 
   final List<Marker> myMarker = [];
   final List<Marker> markerList = [];
@@ -290,9 +290,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              FloatingActionButton(
-                onPressed: () {},
-                child: Icon(Icons.adjust),
+              Positioned(
+                bottom: 16.0,
+                left: 16.0,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    getUserLocation().then((value) async {
+                      CameraPosition cameraPosition = CameraPosition(
+                          target: LatLng(value.latitude, value.longitude),
+                          zoom: 20.0);
+                      final GoogleMapController controller =
+                          await _controller.future;
+                      controller.animateCamera(
+                          CameraUpdate.newCameraPosition(cameraPosition));
+                      setState(() {});
+                    });
+                  },
+                  child: Icon(
+                    Icons.gps_fixed,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  backgroundColor: Colors.green,
+                  elevation: 6.0,
+                  shape: CircleBorder(),
+                ),
               )
             ],
           ),
