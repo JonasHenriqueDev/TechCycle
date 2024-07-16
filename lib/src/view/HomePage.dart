@@ -53,7 +53,22 @@ class _HomeScreenState extends State<HomeScreen> {
       target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 20.0);
 
   final List<Marker> myMarker = [];
-  final List<Marker> markerList = [];
+  final List<Marker> markerList = const [
+    Marker(
+      markerId: MarkerId('local_1'),
+      position: LatLng(-8.891644112516403, -36.49550210591994),
+      infoWindow: InfoWindow(title: 'Casas Bahia'),
+    ),
+    Marker(
+        markerId: MarkerId('local_2'),
+        position: LatLng(-8.882339489423634, -36.479158619049535),
+        infoWindow: InfoWindow(title: 'Bonanza')),
+    Marker(
+      markerId: MarkerId('local_3'),
+      position: LatLng(-8.889801933472567, -36.49276278317157),
+      infoWindow: InfoWindow(title: 'Magazine Luiza'),
+    )
+  ];
 
   final Completer<GoogleMapController> _controller = Completer();
 
