@@ -6,7 +6,7 @@ void main() {
   testWidgets('HelpPage has a title and a central text', (WidgetTester tester) async {
     // Inicialize o teste com a HelpPage
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: HelpPage(),
       ),
     );
@@ -21,7 +21,7 @@ void main() {
   testWidgets('HelpPage has an AppBar with correct properties', (WidgetTester tester) async {
     // Inicialize o teste com a HelpPage
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: HelpPage(),
       ),
     );
@@ -42,7 +42,7 @@ void main() {
   testWidgets('HelpPage central text is centered', (WidgetTester tester) async {
     // Inicialize o teste com a HelpPage
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: HelpPage(),
       ),
     );
