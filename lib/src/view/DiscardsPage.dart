@@ -18,17 +18,6 @@ class DiscardsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(
-                  'assets/images/fotoperfil.png'), // Substitua pela URL da sua imagem de perfil
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Jonas Henrique',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Divider(color: Colors.grey[400], thickness: 1, height: 40),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -54,8 +43,9 @@ class DiscardsPage extends StatelessWidget {
                       const SizedBox(width: 16),
                       const Expanded(
                         child: Text(
-                          'Tv de tubo que não pega \n'
-                              'Valor: R\$ 40,00',
+                          'Local de descarte: Casas Bahia \n'
+                              'Data: 11/07/2024\n'
+                                'Pontos recebidos: 50 pontos',
                           style: TextStyle(fontSize: 22),
                         ),
                       ),
@@ -80,8 +70,9 @@ class DiscardsPage extends StatelessWidget {
                       const SizedBox(width: 16),
                       const Expanded(
                         child: Text(
-                          'Tv de tubo que não pega \n'
-                              'Valor: R\$ 40,00',
+                          'Local de descarte: Magazine Luiza \n'
+                              'Data: 15/07/2024\n'
+                                'Pontos recebidos: 50 pontos',
                           style: TextStyle(fontSize: 22),
                         ),
                       ),
