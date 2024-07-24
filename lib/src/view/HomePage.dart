@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
 import 'package:techcycle/src/provider/recompensa_provider.dart';
-import 'package:techcycle/src/provider/pontos_coleta_provider.dart'; // Importando o provider
+import 'package:techcycle/src/provider/pontos_coleta_provider.dart';
 
 import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
@@ -34,21 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Marker> myMarker = [];
   final List<Marker> markerList = const [
-    Marker(
-      markerId: MarkerId('local_1'),
-      position: LatLng(-8.891644112516403, -36.49550210591994),
-      infoWindow: InfoWindow(title: 'Casas Bahia'),
-    ),
-    Marker(
-      markerId: MarkerId('local_2'),
-      position: LatLng(-8.882339489423634, -36.479158619049535),
-      infoWindow: InfoWindow(title: 'Bonanza'),
-    ),
-    Marker(
-      markerId: MarkerId('local_3'),
-      position: LatLng(-8.889801933472567, -36.49276278317157),
-      infoWindow: InfoWindow(title: 'Magazine Luiza'),
-    ),
+    // Marker(
+    //   markerId: MarkerId('local_1'),
+    //   position: LatLng(-8.891644112516403, -36.49550210591994),
+    //   infoWindow: InfoWindow(title: 'Casas Bahia'),
+    // ),
+    // Marker(
+    //   markerId: MarkerId('local_2'),
+    //   position: LatLng(-8.882339489423634, -36.479158619049535),
+    //   infoWindow: InfoWindow(title: 'Bonanza'),
+    // ),
+    // Marker(
+    //   markerId: MarkerId('local_3'),
+    //   position: LatLng(-8.889801933472567, -36.49276278317157),
+    //   infoWindow: InfoWindow(title: 'Magazine Luiza'),
+    // ),
   ];
 
   final Completer<GoogleMapController> _controller = Completer();
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AnuncioProvider>(context, listen: false).fetchAnuncios();
       Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
-      Provider.of<PontosColetaProvider>(context, listen: false).fetchPontosColetas(); // Fetch pontos de coleta
+      Provider.of<PontosColetaProvider>(context, listen: false).fetchPontosColetas();
     });
     myMarker.addAll(markerList);
     packData();
@@ -75,21 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   packData() {
     getUserLocation().then((value) async {
-      print('Minha Localização');
-      print('${value.latitude} ${value.longitude}');
-
       myMarker.add(Marker(
         markerId: const MarkerId('UserLocation'),
         position: LatLng(value.latitude, value.longitude),
         infoWindow: const InfoWindow(title: 'Minha Localização'),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       ));
-      CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(value.latitude, value.longitude),
-        zoom: 18.0,
-      );
-      final GoogleMapController controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+      // Atualize o mapa com os marcadores combinados
       setState(() {});
     });
   }
@@ -118,6 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refreshRecompensas() async {
     await Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
+  }
+
+  void _search(String query) {
+    // Lógica para buscar anúncios ou recompensas com base no texto `query`
   }
 
   @override
@@ -157,6 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                  onChanged: (text) {
+                    _search(text);
+                  },
                 ),
               ),
               Padding(
@@ -176,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8), // Adding some space between the buttons
+                    SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {},
@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Text(anuncio.descricao),
                                         SizedBox(height: 8),
                                         Text(
-                                          'R\$ ${anuncio.preco.toStringAsFixed(2)}', // Formatando o preço
+                                          'R\$ ${anuncio.preco.toStringAsFixed(2)}',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GoogleMap(
                     initialCameraPosition: _initialPosition,
                     mapType: MapType.normal,
-                    markers: pontoColetaProvider.markers,
+                    markers: {...pontoColetaProvider.markers, ...myMarker.toSet()},
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
                     },
@@ -315,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     _navigateToPage(DiscardsPage());
-                    _navigateToPage(DiscardsPage());
                   },
                   child: Text('Histórico de Descartes'),
                   style: ElevatedButton.styleFrom(
@@ -337,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       if (recompensaProvider.recompensa.isEmpty) {
-                        return Center(child: Text('Nenhuma recompensa disponível'));
+                        return Center(child: Text('Nenhuma recompensa disponível. Verifique mais tarde!'));
                       }
 
                       return ListView.builder(
@@ -378,15 +377,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         SizedBox(height: 8),
                                         Text(recompensa.descricao),
-                                        SizedBox(height: 8),
-                                        // Text(
-                                        //   'Pontos: ${recompensa}', // Exibindo os pontos
-                                        //   style: TextStyle(
-                                        //     fontSize: 16,
-                                        //     fontWeight: FontWeight.bold,
-                                        //     color: Colors.green,
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                   ),
@@ -488,7 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         backgroundColor: Colors.green,
         onTap: _onItemTapped,
         showSelectedLabels: false,
