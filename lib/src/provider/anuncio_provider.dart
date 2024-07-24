@@ -22,9 +22,40 @@ class AnuncioProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
         _anuncios = jsonResponse.map((anuncio) => Anuncio.fromJson(anuncio)).toList();
-        // print(jsonResponse.toString());
       } else {
         print('Falha ao carregar anúncios');
+      }
+    } catch (e) {
+      print('Erro: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addAnuncio(String title, String description, double price) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'titulo': title,
+          'descricao': description,
+          'preco': price,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // Sucesso ao adicionar o anúncio
+        // Atualiza a lista de anúncios
+        await fetchAnuncios();
+      } else {
+        print('Falha ao adicionar anúncio');
       }
     } catch (e) {
       print('Erro: $e');

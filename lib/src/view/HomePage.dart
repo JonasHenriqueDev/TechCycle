@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
 import 'package:techcycle/src/provider/recompensa_provider.dart';
 import 'package:techcycle/src/provider/pontos_coleta_provider.dart';
+import 'package:techcycle/src/view/AddAnuncioPage.dart';
 
 import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
@@ -33,23 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   final List<Marker> myMarker = [];
-  final List<Marker> markerList = const [
-    // Marker(
-    //   markerId: MarkerId('local_1'),
-    //   position: LatLng(-8.891644112516403, -36.49550210591994),
-    //   infoWindow: InfoWindow(title: 'Casas Bahia'),
-    // ),
-    // Marker(
-    //   markerId: MarkerId('local_2'),
-    //   position: LatLng(-8.882339489423634, -36.479158619049535),
-    //   infoWindow: InfoWindow(title: 'Bonanza'),
-    // ),
-    // Marker(
-    //   markerId: MarkerId('local_3'),
-    //   position: LatLng(-8.889801933472567, -36.49276278317157),
-    //   infoWindow: InfoWindow(title: 'Magazine Luiza'),
-    // ),
-  ];
+  final List<Marker> markerList = const [];
 
   final Completer<GoogleMapController> _controller = Completer();
 
@@ -82,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       ));
 
-      // Atualize o mapa com os marcadores combinados
       setState(() {});
     });
   }
@@ -141,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         children: <Widget>[
+          // Página de Anúncios
           Column(
             children: [
               Padding(
@@ -268,6 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+          // Página do Mapa
           Consumer<PontosColetaProvider>(
             builder: (context, pontoColetaProvider, child) {
               return Stack(
@@ -308,6 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          // Página de Recompensas
           Column(
             children: [
               Padding(
@@ -484,6 +471,16 @@ class _HomeScreenState extends State<HomeScreen> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
       ),
+      floatingActionButton: _selectedIndex == 0 // Exibir apenas na página de anúncios
+          ? FloatingActionButton(
+        onPressed: () {
+          _navigateToPage(AddAdPage());  // Navegar para a página de adicionar
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+      )
+          : null, // Não exibir o botão em outras páginas
     );
   }
 
@@ -495,3 +492,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
