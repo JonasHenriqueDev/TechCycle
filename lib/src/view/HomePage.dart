@@ -12,6 +12,7 @@ import 'AdvertsPage.dart';
 import 'NotificationsPage.dart';
 import 'SettingsPage.dart';
 import 'HelpPage.dart';
+import 'AdvertInfoPage.dart';
 
 void main() {
   runApp(
@@ -232,55 +233,60 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: anuncioProvider.anuncios.length,
                         itemBuilder: (context, index) {
                           final anuncio = anuncioProvider.anuncios[index];
-                          return Card(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.asset(
-                                        'assets/images/tvplaceholder.png',
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
+                          return GestureDetector(
+                            onTap: () {
+                              _navigateToPage(AdvertInfoPage(anuncio: anuncio));
+                            },
+                            child: Card(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          'assets/images/tvplaceholder.png',
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(width: 16),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          anuncio.titulo,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            anuncio.titulo,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(anuncio.descricao),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'R\$ ${anuncio.preco.toStringAsFixed(2)}', // Formatando o preço
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
+                                          SizedBox(height: 8),
+                                          Text(anuncio.descricao),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'R\$ ${anuncio.preco.toStringAsFixed(2)}', // Formatando o preço
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
