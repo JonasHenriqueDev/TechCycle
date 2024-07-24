@@ -6,36 +6,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
 import 'package:techcycle/src/provider/recompensa_provider.dart';
+import 'package:techcycle/src/provider/pontos_coleta_provider.dart'; // Importando o provider
+
 import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
 import 'AdvertsPage.dart';
 import 'NotificationsPage.dart';
 import 'SettingsPage.dart';
 import 'HelpPage.dart';
-
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AnuncioProvider()),
-      ],
-      child: MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TechCycle',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: HomeScreen(),
-    );
-  }
-}
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -50,7 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late GoogleMapController mapController;
 
   static const CameraPosition _initialPosition = CameraPosition(
-      target: LatLng(-8.891076456862265, -36.496254904851526), zoom: 20.0);
+    target: LatLng(-8.891076456862265, -36.496254904851526),
+    zoom: 20.0,
+  );
 
   final List<Marker> myMarker = [];
   final List<Marker> markerList = const [
@@ -60,14 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
       infoWindow: InfoWindow(title: 'Casas Bahia'),
     ),
     Marker(
-        markerId: MarkerId('local_2'),
-        position: LatLng(-8.882339489423634, -36.479158619049535),
-        infoWindow: InfoWindow(title: 'Bonanza')),
+      markerId: MarkerId('local_2'),
+      position: LatLng(-8.882339489423634, -36.479158619049535),
+      infoWindow: InfoWindow(title: 'Bonanza'),
+    ),
     Marker(
       markerId: MarkerId('local_3'),
       position: LatLng(-8.889801933472567, -36.49276278317157),
       infoWindow: InfoWindow(title: 'Magazine Luiza'),
-    )
+    ),
   ];
 
   final Completer<GoogleMapController> _controller = Completer();
@@ -77,17 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AnuncioProvider>(context, listen: false).fetchAnuncios();
-      Provider.of<RecompensaProvider>(context, listen: false)
-          .fetchRecompensas();
+      Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
+      Provider.of<PontosColetaProvider>(context, listen: false).fetchPontosColetas(); // Fetch pontos de coleta
     });
     myMarker.addAll(markerList);
     packData();
   }
 
   Future<Position> getUserLocation() async {
-    await Geolocator.requestPermission()
-        .then((value) {})
-        .onError((error, stackTrace) {
+    await Geolocator.requestPermission().then((value) {}).onError((error, stackTrace) {
       print('Error $error');
     });
 
@@ -100,15 +79,15 @@ class _HomeScreenState extends State<HomeScreen> {
       print('${value.latitude} ${value.longitude}');
 
       myMarker.add(Marker(
-          markerId: const MarkerId('UserLocation'),
-          position: LatLng(value.latitude, value.longitude),
-          infoWindow: const InfoWindow(
-            title: 'Minha Localização',
-          ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueAzure)));
+        markerId: const MarkerId('UserLocation'),
+        position: LatLng(value.latitude, value.longitude),
+        infoWindow: const InfoWindow(title: 'Minha Localização'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ));
       CameraPosition cameraPosition = CameraPosition(
-          target: LatLng(value.latitude, value.longitude), zoom: 18.0);
+        target: LatLng(value.latitude, value.longitude),
+        zoom: 18.0,
+      );
       final GoogleMapController controller = await _controller.future;
       controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
       setState(() {});
@@ -126,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _navigateToPage(page) {
+  void _navigateToPage(Widget page) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => page),
@@ -138,8 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refreshRecompensas() async {
-    await Provider.of<RecompensaProvider>(context, listen: false)
-        .fetchRecompensas();
+    await Provider.of<RecompensaProvider>(context, listen: false).fetchRecompensas();
   }
 
   @override
@@ -233,8 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final anuncio = anuncioProvider.anuncios[index];
                           return Card(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
@@ -256,8 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           anuncio.titulo,
@@ -292,95 +268,63 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Stack(
-            children: <Widget>[
-              Container(
-                child: SafeArea(
-                  child: GoogleMap(
+          Consumer<PontosColetaProvider>(
+            builder: (context, pontoColetaProvider, child) {
+              return Stack(
+                children: <Widget>[
+                  GoogleMap(
                     initialCameraPosition: _initialPosition,
                     mapType: MapType.normal,
-                    markers: Set<Marker>.of(myMarker),
+                    markers: pontoColetaProvider.markers,
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
                     },
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: 16.0,
-                left: 16.0,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    getUserLocation().then((value) async {
-                      CameraPosition cameraPosition = CameraPosition(
-                          target: LatLng(value.latitude, value.longitude),
-                          zoom: 20.0);
-                      final GoogleMapController controller =
-                          await _controller.future;
-                      controller.animateCamera(
-                          CameraUpdate.newCameraPosition(cameraPosition));
-                      setState(() {});
-                    });
-                  },
-                  child: Icon(
-                    Icons.gps_fixed,
-                    color: Colors.white,
-                    size: 35,
+                  Positioned(
+                    bottom: 16.0,
+                    left: 16.0,
+                    child: FloatingActionButton(
+                      onPressed: () async {
+                        Position userLocation = await getUserLocation();
+                        CameraPosition cameraPosition = CameraPosition(
+                          target: LatLng(userLocation.latitude, userLocation.longitude),
+                          zoom: 20.0,
+                        );
+                        final GoogleMapController controller = await _controller.future;
+                        controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+                        setState(() {});
+                      },
+                      child: Icon(
+                        Icons.gps_fixed,
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      backgroundColor: Colors.green,
+                      elevation: 6.0,
+                      shape: CircleBorder(),
+                    ),
                   ),
-                  backgroundColor: Colors.green,
-                  elevation: 6.0,
-                  shape: CircleBorder(),
-                ),
-              )
-            ],
+                ],
+              );
+            },
           ),
           Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Pesquisar...',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToPage(DiscardsPage());
+                    _navigateToPage(DiscardsPage());
+                  },
+                  child: Text('Histórico de Descartes'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Histórico'),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.green,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8), // Adding some space between the buttons
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Filtros'),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.green,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
               Expanded(
@@ -393,18 +337,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       if (recompensaProvider.recompensa.isEmpty) {
-                        return Center(
-                            child: Text('Nenhuma recompensa encontrada'));
+                        return Center(child: Text('Nenhuma recompensa disponível'));
                       }
 
                       return ListView.builder(
                         itemCount: recompensaProvider.recompensa.length,
                         itemBuilder: (context, index) {
-                          final recompensa =
-                              recompensaProvider.recompensa[index];
+                          final recompensa = recompensaProvider.recompensa[index];
                           return Card(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
@@ -418,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'assets/images/ifoodplaceholder.png',
                                         width: 100,
                                         height: 100,
-                                        fit: BoxFit.fitWidth,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
@@ -426,8 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           recompensa.titulo,
@@ -439,6 +379,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(height: 8),
                                         Text(recompensa.descricao),
                                         SizedBox(height: 8),
+                                        // Text(
+                                        //   'Pontos: ${recompensa}', // Exibindo os pontos
+                                        //   style: TextStyle(
+                                        //     fontSize: 16,
+                                        //     fontWeight: FontWeight.bold,
+                                        //     color: Colors.green,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),
@@ -550,13 +498,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildIcon(IconData icon, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: _selectedIndex == index ? Colors.green[800] : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: EdgeInsets.all(8),
-      child: Icon(icon, color: Colors.white),
+    return Icon(
+      icon,
+      color: _selectedIndex == index ? Colors.white : Colors.white70,
+      size: 30.0,
     );
   }
 }

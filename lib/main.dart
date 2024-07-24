@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techcycle/src/provider/anuncio_provider.dart';
+import 'package:techcycle/src/provider/pontos_coleta_provider.dart';
 import 'package:techcycle/src/provider/recompensa_provider.dart';
 import 'package:techcycle/src/view/HomePage.dart';
 
@@ -11,6 +12,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => AnuncioProvider()),
         ChangeNotifierProvider(create: (context) => RecompensaProvider()),
+        ChangeNotifierProvider(create: (context) => PontosColetaProvider()),
       ],
       child: MyApp(),
     ),
