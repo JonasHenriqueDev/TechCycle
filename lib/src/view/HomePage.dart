@@ -10,7 +10,6 @@ import 'ProfilePage.dart';
 import 'DiscardsPage.dart';
 import 'AdvertsPage.dart';
 import 'NotificationsPage.dart';
-import 'SettingsPage.dart';
 import 'HelpPage.dart';
 
 void main() {
@@ -502,14 +501,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.pop(context);
                 _navigateToPage(NotificationsPage());
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configurações'),
-              onTap: () {
-                Navigator.pop(context);
-                _navigateToPage(SettingsPage());
               },
             ),
             ListTile(

@@ -37,7 +37,8 @@ class AdvertsPage extends StatelessWidget {
                   const Expanded(
                     child: Text(
                       'Tv de tubo que não pega \n'
-                          'Valor: R\$ 40,00',
+                          'Valor: R\$ 40,00\n'
+                            'Status: Vendido',
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
@@ -63,7 +64,8 @@ class AdvertsPage extends StatelessWidget {
                   const Expanded(
                     child: Text(
                       'Tv de tubo que não pega \n'
-                          'Valor: R\$ 40,00',
+                          'Valor: R\$ 40,00\n'
+                            'Status: Anunciado',
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
